@@ -8,7 +8,7 @@ import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading, setUser } from "@/redux/authSlice";
+import { setLoginLoading, setUser } from "@/redux/authSlice";
 // import store from "@/redux/store";
 import { Loader2 } from "lucide-react";
 const Login = () => {
@@ -27,7 +27,7 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setLoading(true));
+      dispatch(setLoginLoading(true));
       const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
         headers: {
           "Content-Type": "application/json"
@@ -43,9 +43,11 @@ const Login = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");
       console.log(error);
+      dispatch(setLoginLoading(false));
     }
     finally {
-      dispatch(setLoading(false));
+     dispatch(setLoginLoading(false));
+
     }
   };
   return (
@@ -130,7 +132,7 @@ const Login = () => {
             loading ? <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 py-3 sm:py-4 text-base sm:text-lg font-semibold"
-            >
+           disabled >
               <Loader2 className="mr-2 h-4 2-4 animate-spin" />Please Wait
             </Button>
               :
