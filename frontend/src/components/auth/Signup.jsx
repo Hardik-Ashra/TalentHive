@@ -203,7 +203,7 @@ const Signup = () => {
             loading ? <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 py-3 sm:py-4 text-base sm:text-lg font-semibold"
-            >
+            disabled>
               <Loader2 className="mr-2 h-4 2-4 animate-spin" />Please Wait
             </Button>
               :
