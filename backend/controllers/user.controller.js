@@ -26,7 +26,7 @@ export const register = async (req, res) => {
 
     // 3. Convert file to Data URI for Cloudinary
     const fileUri = getDataUri(req.file);
-    console.log("File URI:", fileUri.content);
+    
 
     // 4. Upload to Cloudinary
     const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
