@@ -43,7 +43,7 @@ const Login = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");
       console.log(error);
-      dispatch(setLoginLoading(false));
+      
     }
     finally {
      dispatch(setLoginLoading(false));
@@ -132,7 +132,7 @@ const Login = () => {
             loading ? <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 py-3 sm:py-4 text-base sm:text-lg font-semibold"
-           disabled >
+            >
               <Loader2 className="mr-2 h-4 2-4 animate-spin" />Please Wait
             </Button>
               :
