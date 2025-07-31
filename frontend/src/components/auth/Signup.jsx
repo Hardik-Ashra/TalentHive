@@ -8,7 +8,7 @@ import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "@/redux/authSlice";
+import { setSignupLoading } from "@/redux/authSlice";
 import { Loader2 } from "lucide-react";
 const Signup = () => {
   const [input, setInput] = useState({
@@ -44,7 +44,7 @@ const Signup = () => {
     }
 
     try {
-      dispatch(setLoading(true));
+      dispatch(setSignupLoading(true));
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -59,9 +59,12 @@ const Signup = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Registration failed");
       console.log(error);
+      dispatch(setSignupLoading(false));
+
     }
     finally {
-      dispatch(setLoading(false));
+      dispatch(setSignupLoading(false));
+
     }
   };
 
@@ -203,7 +206,7 @@ const Signup = () => {
             loading ? <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 py-3 sm:py-4 text-base sm:text-lg font-semibold"
-            disabled>
+           disabled >
               <Loader2 className="mr-2 h-4 2-4 animate-spin" />Please Wait
             </Button>
               :
