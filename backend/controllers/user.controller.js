@@ -5,47 +5,68 @@ import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
 export const register = async (req, res) => {
-    try {
-        const { fullname, email, phoneNumber, password, role } = req.body;
-         
-        if (!fullname || !email || !phoneNumber || !password || !role) {
-            return res.status(400).json({
-                message: "Something is missing",
-                success: false
-            });
-        };
-        const file = req.file;
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+  try {
+    const { fullname, email, phoneNumber, password, role } = req.body;
 
-        const user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({
-                message: 'User already exist with this email.',
-                success: false,
-            })
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        await User.create({
-            fullname,
-            email,
-            phoneNumber,
-            password: hashedPassword,
-            role,
-            profile:{
-                profilePhoto:cloudResponse.secure_url,
-            }
-        });
-
-        return res.status(201).json({
-            message: "Account created successfully.",
-            success: true
-        });
-    } catch (error) {
-        console.log(error);
+    // 1. Validate required fields
+    if (!fullname || !email || !phoneNumber || !password || !role) {
+      return res.status(400).json({
+        message: "All fields are required",
+        success: false,
+      });
     }
-}
+
+    // 2. Check file
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Profile picture is required",
+        success: false,
+      });
+    }
+
+    // 3. Convert file to Data URI for Cloudinary
+    const fileUri = getDataUri(req.file);
+    console.log("File URI:", fileUri.content);
+
+    // 4. Upload to Cloudinary
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+
+    // 5. Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User already exists with this email",
+        success: false,
+      });
+    }
+
+    // 6. Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 7. Create user
+    await User.create({
+      fullname,
+      email,
+      phoneNumber,
+      password: hashedPassword,
+      role,
+      profile: {
+        profilePhoto: cloudResponse.secure_url,
+      },
+    });
+
+    return res.status(201).json({
+      message: "Account created successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Register Error:", error);
+    return res.status(500).json({
+      message: "Server error",
+      success: false,
+    });
+  }
+};
 export const login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
